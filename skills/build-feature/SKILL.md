@@ -43,20 +43,21 @@ For each phase in the plan, in order:
 2. **Execute each task in the phase**, in order:
    1. **Announce:** `### Task N.M: [title]`
    2. **Re-read relevant files** listed in the task's "Files" field to get current state (the plan may have been written in a different session — don't assume context).
-   3. **Implement** the changes. Write clean code that matches the codebase patterns described in the plan's Research Summary.
-   4. **Verify** by actually running the exact method specified in the task's "Verify" field. If verification fails, fix the issue before moving on. If you can't fix it after 2 attempts, pause and tell the user what's wrong.
-   5. **Record the evidence** under the task in the plan file: the command and the lines of output that show the result.
+   3. **Implement** the changes, following the project's CLAUDE.md and the conventions in the plan's Research Summary. Before writing, read a neighboring file that does something similar and search for existing helpers, so new code matches what's there and doesn't duplicate it.
+   4. **Self-review the diff.** Run `git diff` on the task's changes and read it the way a reviewer would. Fix what you find now; a passing check only shows the code works, not that it's well written.
+   5. **Verify** by actually running the exact method specified in the task's "Verify" field. If verification fails, fix the issue before moving on. If you can't fix it after 2 attempts, pause and tell the user what's wrong.
+   6. **Record the evidence** under the task in the plan file: the command and the lines of output that show the result.
 
       ```markdown
       - **Evidence:** `curl -s localhost:3000/api/health` → `{"status":"ok"}`
       ```
 
       Evidence must come from this run. "It should work", "it compiles", or a check of something else doesn't count.
-   6. **Mark complete** in the plan file by adding `[x]` to the task heading (e.g., `#### 1.1. [x] Short title`). This enables resuming if the build is interrupted. Then move to the next task.
+   7. **Mark complete** in the plan file by adding `[x]` to the task heading (e.g., `#### 1.1. [x] Short title`). This enables resuming if the build is interrupted. Then move to the next task.
 
    If the check can't run or the result is inconclusive, the task isn't done. Leave it as `[ ]`, add `- **Unverified:** [what you tried and what stopped you]`, and tell the user at the next pause. If later tasks depend on it, pause now.
 
-3. **Phase check:** After completing all tasks in a phase, run relevant tests and verify the phase works as a cohesive unit. Fix anything that broke.
+3. **Phase check:** After completing all tasks in a phase, run relevant tests, plus the project's linter, formatter, and type-checker if it has them, and verify the phase works as a cohesive unit. Fix anything that broke, including new lint or type errors in code this build touched.
 
 4. **Pause for review:** Stop before starting the next phase. Show the user:
 
@@ -90,7 +91,7 @@ After all phases are done:
 Review the build with fresh eyes before reporting it done. Only do this once all phases are complete.
 
 1. Spawn a fresh subagent and have it run the `/review-feature` skill. Give it the plan path and the list of files changed in this build, and leave out your build reasoning — it should judge the code, not your explanation of it. If you can't spawn a subagent, run the review yourself and say in the summary that it wasn't independent.
-2. Fix Critical findings in code this build wrote or changed. A Critical bug that was already there is outside the plan, so report it instead of fixing it. Warnings and Suggestions also go in the summary for the user to decide on.
+2. Fix Critical and Warning findings in code this build wrote or changed. A problem that was already there is outside the plan, so report it instead of fixing it. If fixing a Warning would mean going beyond the plan's scope or changing its design, leave it and report it. Suggestions go in the summary for the user to decide on.
 3. If you fixed anything, re-run the tests and do one more fresh review of those fixes.
 4. Stop there, even if the second review finds more. Report what's left as open issues rather than starting another round.
 
@@ -108,7 +109,7 @@ Review the build with fresh eyes before reporting it done. Only do this once all
   - ...
 - **Verified:** [what was checked end to end, and the result]
 - **Needs a human:** [checks you couldn't run yourself and why, or "none"]
-- **Review:** [Critical findings fixed, and any issues still open]
+- **Review:** [Critical and Warning findings fixed, and any issues still open]
 - **Follow-up items:** [anything from the Notes section that still needs attention]
 ```
 
@@ -124,13 +125,14 @@ Review the build with fresh eyes before reporting it done. Only do this once all
 >
 > **Needs a human:** [only checks you couldn't run yourself, with why, or "none"]
 >
-> **Review:** [Critical findings fixed, plus open Warnings and Suggestions to decide on]
+> **Review:** [Critical and Warning findings fixed, plus anything left open and Suggestions to decide on]
 >
 > Plan updated at `.claude/plans/[feature-name].md` with completion details.
 
 ## Principles
 
 - **Follow the plan.** Don't add scope, refactor unrelated code, or introduce patterns not in the plan. If you spot something worth improving, note it in the follow-up items.
+- **Working isn't the bar.** Passing verification is the minimum. Code also has to fit the codebase and hold up to the independent review, so write it as if the reviewer will read every line.
 - **Check the real thing.** Verify against the running code, not a proxy. Never hand the user a check you could have run yourself.
 - **Keep the user informed but not overwhelmed.** Show task start/complete announcements. Don't narrate every file read or search.
 - **If something goes wrong,** explain what happened, what you tried, and propose a fix. Don't silently retry in a loop. If a task is blocked, pause and ask the user.

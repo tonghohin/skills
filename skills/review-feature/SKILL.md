@@ -1,6 +1,6 @@
 ---
 name: review-feature
-description: "Review code changes for bugs, edge cases, security issues, and pattern consistency. Use when the user says 'review', 'check my code', 'audit', 'look over', 'sanity check', 'code review', or after running /build-feature. Can review against a plan file if one exists, or review standalone changes."
+description: "Review code changes for bugs, edge cases, security issues, pattern consistency, and maintainability. Use when the user says 'review', 'check my code', 'audit', 'look over', 'sanity check', 'code review', or after running /build-feature. Can review against a plan file if one exists, or review standalone changes."
 argument-hint: "[feature-name or branch]"
 ---
 
@@ -54,6 +54,18 @@ Review the changes across these dimensions, in order of priority:
 ### Pattern Consistency
 - Do the changes follow existing codebase patterns? (naming, file structure, error handling, logging)
 - Are there new patterns introduced that diverge from the rest of the codebase?
+- Do the changes break a rule in the project's CLAUDE.md or its lint, format, or type-check config? Run those tools if the project has them.
+
+### Maintainability
+- Does new code duplicate a helper, type, constant, or component that already exists? Does it add a dependency for something the project already has?
+- Is anything built beyond what the change needs? (speculative abstractions, unused parameters or options, wrappers with one caller)
+- Does the change add shared mutable state? (a module-level or global object that functions modify, or a function that mutates its arguments) Data should be passed in and returned, or owned by one place such as an instance, a request context, or the project's state store. On a server, state shared across requests is a Critical bug, not a style issue.
+- Are there type escape hatches? (`any`, unchecked casts, non-null assertions, `ignore` comments)
+- Are functions doing more than one job, deeply nested, or named so they need a comment to explain them?
+- Are there magic values that should be named constants or configuration?
+- Is anything left behind? (debug logging, commented-out code, stray TODOs, comments that narrate the code)
+
+Report these as Warnings when they'll cost the next person real time, and as Suggestions when they're a matter of taste.
 
 ## Step 3: Adversarial Self-Check
 

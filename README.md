@@ -22,7 +22,7 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
     ├── Reads the saved plan
     ├── Executes each task in order, skipping any already marked [x]
     ├── Verifies each task for real and saves the evidence in the plan
-    ├── Runs an independent /review-feature and fixes Critical findings
+    ├── Runs an independent /review-feature and fixes Critical and Warning findings
     └── Updates the plan file with completion details
 ```
 
@@ -34,7 +34,7 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
 | `/plan-feature` | "plan", "scope", "break down", "design" | Research codebase → create task plan → save to `.claude/plans/` |
 | `/build-feature` | Manual: type `/build-feature` | Load plan from `.claude/plans/` → execute tasks → verify → independent review → summarize |
 | `/revise-plan` | "change the plan", "add a task to", "swap X for Y" | Edit an existing plan; preserves `[x]` markers so in-flight builds resume cleanly |
-| `/review-feature` | "review", "check my code", "audit" | Review changes for bugs, edge cases, security, and consistency |
+| `/review-feature` | "review", "check my code", "audit" | Review changes for bugs, edge cases, security, consistency, and maintainability |
 | `/debug-issue` | "debug", "fix this bug", "why is this broken" | Structured debugging: reproduce → isolate → fix → verify |
 | `/refactor` | "refactor", "restructure", "split this file" | Plan and execute a refactor with a test baseline |
 | `/learn-codebase` | "walk me through", "onboard me", "explain this repo" | Deep dive: explore the repo → trace real flows → save a record to `.claude/learn/` |

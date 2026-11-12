@@ -37,6 +37,7 @@ Use subagents or direct exploration to understand the codebase. Be thorough — 
 - Are there existing patterns for similar features? (auth, routing, state, API calls, DB access, tests)
 - What dependencies are relevant?
 - Are there any CLAUDE.md, README, or architecture docs?
+- What coding conventions does the project enforce or follow? (lint, format, and type-check config and the commands that run them; naming, error handling, and file layout in the code near the feature)
 - What testing patterns exist? (framework, conventions, coverage)
 - Check recent git history — are there in-flight changes or PRs touching the same areas? The plan should account for concurrent work.
 - Are there any existing types, interfaces, or schemas the new feature must conform to?
@@ -77,6 +78,7 @@ Write a plan document with this structure:
 
 - **Stack:** [e.g., Next.js 14 App Router, TypeScript, Prisma, PostgreSQL]
 - **Relevant patterns:** [e.g., existing auth uses NextAuth in src/lib/auth.ts]
+- **Conventions:** [rules the builder must follow, e.g., named exports only, errors returned as Result, `npm run lint` and `npm run typecheck` must pass]
 - **Key files:** [list the 3-8 most relevant existing files/dirs]
 - **New dependencies:** [any new packages needed, or "none"]
 - **Risks/Considerations:** [edge cases, breaking changes, migrations]
