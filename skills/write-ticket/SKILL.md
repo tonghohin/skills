@@ -23,12 +23,12 @@ Restate the request in 1–2 sentences, then settle three things. Infer them fro
 
 If nobody can say what "done" looks like because a question is still open, it's a spike. Write the spike and leave the build ticket until the spike is answered.
 
-**Reader.** Who picks this up sets how much goes in (see Technical Depth).
+**Reader.** Assume the ticket is for a developer on the team who knows the codebase but was not in this conversation. Don't ask about it. Change the assumption only if the user says otherwise or the request makes it plain, because it sets how much goes in (see Technical Depth):
 
-- A teammate who knows the codebase.
 - Someone new to this area, or another team.
 - A coding agent, which has only the ticket and the repo.
-- The user themselves, later.
+
+Others will read parts of it too: whoever prioritizes it reads the title and Problem, and whoever reviews or tests it reads the Acceptance Criteria. Keep those parts free of code-level detail so they make sense to someone who isn't a developer, and put the technical material under Technical Context.
 
 **House style.** Check for `.github/ISSUE_TEMPLATE/`, a ticket template in the docs, or conventions in `CLAUDE.md`. If the `gh` CLI or a tracker tool is available, read a few recent tickets. Where the team already has a format, use its sections and wording, and apply the rules in this skill to what goes inside them.
 

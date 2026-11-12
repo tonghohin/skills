@@ -11,7 +11,7 @@
       "name": "dev",
       "source": "./",
       "description": "Structured development skills: write tickets, plan, build, revise, review, debug, refactor, learn a codebase, and correct recurring mistakes.",
-      "version": "1.2.0"
+      "version": "1.2.1"
     }
   ]
 }
