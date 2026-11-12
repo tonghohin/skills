@@ -2,7 +2,7 @@
 
 A set of skills for structured development with Claude Code: plan before you build, revise plans as scope shifts, and review, debug, or refactor existing code with repeatable workflows.
 
-The core loop is plan → build, with `/revise-plan` for mid-flight changes. The remaining skills cover review, debugging, refactoring, learning a new codebase, and stopping recurring mistakes — each is a standalone workflow, usable on its own.
+The core loop is plan → build, with `/revise-plan` for mid-flight changes. The remaining skills cover ticket writing, review, debugging, refactoring, learning a new codebase, and stopping recurring mistakes — each is a standalone workflow, usable on its own.
 
 ## How the plan → build loop works
 
@@ -30,6 +30,7 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
 
 | Skill | Trigger | What it does |
 |-------|---------|--------------|
+| `/write-ticket` | "write a ticket", "file a bug", "create an issue" | Research codebase → interview you on the gaps → draft a ticket → file it in your tracker or hand back markdown |
 | `/plan-feature` | "plan", "scope", "break down", "design" | Research codebase → create task plan → save to `.claude/plans/` |
 | `/build-feature` | Manual: type `/build-feature` | Load plan from `.claude/plans/` → execute tasks → verify → independent review → summarize |
 | `/revise-plan` | "change the plan", "add a task to", "swap X for Y" | Edit an existing plan; preserves `[x]` markers so in-flight builds resume cleanly |
@@ -96,6 +97,16 @@ Add the marketplace and plugin to a project's `.claude/settings.json` so teammat
 ```
 
 ## Usage
+
+### Write a ticket
+
+```
+/write-ticket exports time out for accounts with more than 10k invoices
+```
+
+Claude reads the relevant code first, then interviews you in short rounds about what only you know: why it matters, what "done" looks like, what happens on failure, and what's out of scope. Vague answers get pushed back on until they can be tested. It then drafts a bug, feature, task, or spike ticket with a problem statement, pass/fail acceptance criteria, and technical context that points to where the work starts and what must not change, without dictating the implementation. Before showing you the draft, it rereads it as an assignee who wasn't in the conversation and fixes whatever they would have to ask.
+
+Nothing is saved to the repo. If `gh` or a tracker tool is available, Claude offers to file the ticket, and only does so when you say yes. Otherwise it hands back the title and body as markdown ready to paste. It uses your team's issue template if the repo has one.
 
 ### Plan a feature
 
