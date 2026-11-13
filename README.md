@@ -2,7 +2,7 @@
 
 A set of skills for structured development with Claude Code: plan before you build, revise plans as scope shifts, and review, debug, or refactor existing code with repeatable workflows.
 
-The core loop is plan → build, with `/revise-plan` for mid-flight changes. The remaining skills cover ticket writing, review, debugging, refactoring, learning a new codebase, and stopping recurring mistakes — each is a standalone workflow, usable on its own.
+The core loop is plan → build, with `/revise-plan` for mid-flight changes. The remaining skills cover ticket writing, review, pull request review, debugging, refactoring, learning a new codebase, and stopping recurring mistakes — each is a standalone workflow, usable on its own.
 
 ## How the plan → build loop works
 
@@ -35,6 +35,7 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
 | `/build-feature` | Manual: type `/build-feature` | Load plan from `.claude/plans/` → execute tasks → verify → independent review → summarize |
 | `/revise-plan` | "change the plan", "add a task to", "swap X for Y" | Edit an existing plan; preserves `[x]` markers so in-flight builds resume cleanly |
 | `/review-feature` | "review", "check my code", "audit" | Review changes for bugs, edge cases, security, consistency, and maintainability |
+| `/review-pr` | "review PR 123", "look at this PR", a pasted PR link | Read the intent → check design → verify each finding → draft a verdict and labeled inline comments → post to GitHub only when you say so |
 | `/debug-issue` | "debug", "fix this bug", "why is this broken" | Structured debugging: reproduce → isolate → fix → verify |
 | `/refactor` | "refactor", "restructure", "split this file" | Plan and execute a refactor with a test baseline |
 | `/learn-codebase` | "walk me through", "onboard me", "explain this repo" | Deep dive: explore the repo → trace real flows → save a record to `.claude/learn/` |
@@ -157,6 +158,18 @@ Runs the unchecked tasks — including any cleanup tasks — so plan and code co
 ```
 
 Reviews the pending diff against a plan if one exists, or reviews standalone changes otherwise. Each Critical or Warning finding says how far it was proven, from a cited line up to a reproduction in the running app.
+
+### Review a pull request
+
+```
+/review-pr 123
+```
+
+Takes a PR number, a URL, or a branch; with no argument it reviews the PR for the current branch. Claude reads the description, linked issue, CI status, and earlier review comments, then checks the PR's code out into a separate worktree so your working tree isn't touched. It reviews design first and lines second, and tries to disprove each finding before keeping it: confirmed problems become issues, unconfirmed ones become questions, and anything CI or another reviewer already covers is dropped.
+
+The draft has a recommended verdict, a short summary that says what was and wasn't checked, and inline comments labeled blocking or non-blocking, in [Conventional Comments](https://conventionalcomments.org/) style unless your team has its own. Nothing is posted until you say so. When you do, it goes up as a single review under your account, with the verdict you chose. It needs the `gh` CLI logged in to read and post on GitHub; without it, Claude reviews the branch diff and hands back markdown.
+
+Use `/review-feature` for your own uncommitted changes or a build from a plan, and `/review-pr` for a pull request.
 
 ### Debug an issue
 

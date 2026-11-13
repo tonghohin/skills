@@ -1,6 +1,6 @@
 ---
 name: review-feature
-description: "Review code changes for bugs, edge cases, security issues, pattern consistency, and maintainability. Use when the user says 'review', 'check my code', 'audit', 'look over', 'sanity check', 'code review', or after running /build-feature. Can review against a plan file if one exists, or review standalone changes."
+description: "Review code changes for bugs, edge cases, security issues, pattern consistency, and maintainability. Use when the user says 'review', 'check my code', 'audit', 'look over', 'sanity check', 'code review', or after running /build-feature. Can review against a plan file if one exists, or review standalone changes. For a pull request, especially someone else's, use /review-pr."
 argument-hint: "[feature-name or branch]"
 ---
 
