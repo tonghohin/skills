@@ -76,7 +76,7 @@ Read every changed line. Work through these in order; the early ones matter most
 
 Stay inside the PR. A problem in code the PR didn't touch is out of scope unless the change makes it worse or depends on it. If it's worth raising, raise it once as a non-blocking note, or suggest a follow-up issue.
 
-Notice what is done well, too: a hard case handled, a clean simplification, a good test. One specific, sincere remark tells the author what to keep doing. Skip it if nothing stands out, because empty praise reads as empty.
+Look for what needs to change. Don't collect things that are fine or done well; a comment that asks nothing of the author is one more notification for them to read and dismiss.
 
 ## Step 4: Verify Every Finding
 
@@ -123,7 +123,8 @@ Each comment is tied to a line the PR changed and carries a label that tells the
 | `suggestion (non-blocking):` | A concrete improvement, with what it is and why it's better. |
 | `question:` | Something you couldn't confirm, or a choice you don't understand. |
 | `nitpick (non-blocking):` | Small and a matter of preference. |
-| `praise:` | Something done well, and why. |
+
+Every inline comment asks the author for a change or an answer. Leave out praise, notes, and remarks that the code looks good, even though Conventional Comments has labels for them. If the work is solid, the verdict and the first line of the summary say so.
 
 How to write one:
 
