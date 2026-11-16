@@ -124,7 +124,7 @@ Each comment is tied to a line the PR changed and carries a label that tells the
 | `question:` | Something you couldn't confirm, or a choice you don't understand. |
 | `nitpick (non-blocking):` | Small and a matter of preference. |
 
-Every inline comment asks the author for a change or an answer. Leave out praise, notes, and remarks that the code looks good, even though Conventional Comments has labels for them. If the work is solid, the verdict and the first line of the summary say so.
+Every inline comment asks the author for a change or an answer. Leave out praise, notes, and remarks that the code looks good, even though Conventional Comments has labels for them. The summary opens with "Good work!", and that is the only place the review says it.
 
 How to write one:
 
@@ -148,8 +148,10 @@ How to write one:
 
 The review body. Short, because the detail lives in the inline comments.
 
+Always open with exactly "Good work!", whatever the verdict. The author put effort in, and a review that requests changes lands better when it starts by saying so. Keep it to those few words; the rest of the summary stays about what needs to change.
+
 ```markdown
-[One or two sentences: what the change does and your overall read.]
+Good work! [One or two sentences: what the change does and your overall read.]
 
 **Blocking**
 - [One line each, pointing to the inline comment. Omit the section if empty.]
