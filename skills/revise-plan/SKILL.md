@@ -16,7 +16,7 @@ You aren't building, and you aren't re-planning from scratch. You are editing th
 
 ## Step 1: Load the Plan
 
-Plans live in `.claude/plans/` at the **repo root** (resolve with `git rev-parse --show-toplevel`), not in the user's home `~/.claude/` folder. Read from and write back to that repo path only.
+Plans live in `.claude/plans/` at the **repo root** (resolve with `git rev-parse --show-toplevel`), not in the user's home `~/.claude/` folder.
 
 Plans found when this skill started:
 
@@ -77,7 +77,7 @@ Update the **Research Summary** in place to reflect reality after the change.
 
 ## Step 4: Rewrite Surgically
 
-Apply the change directly. The plan after revision must read as current desired state — no supersede markers, no superseded tasks, no changelog entries inline with tasks.
+Apply the change directly. The plan after revision must read as current desired state — no supersede markers, no superseded tasks, no changelog entries inline with tasks. Change only what the request covers; don't reword, reorder, or tighten unrelated tasks.
 
 The rules below cover both built (`[x]`) and unbuilt (`[ ]`) tasks. For unbuilt tasks it's simpler — no code exists yet, so no cleanup task and no "Replaces previous build" note. The extra machinery only kicks in when `[x]` is involved.
 
@@ -146,7 +146,3 @@ This is the only breadcrumb kept in the plan itself. Full history lives in git.
    > /build-feature [feature-name]
    > ```
    > `/build-feature` will skip completed tasks and execute the unchecked ones, including any cleanup tasks — converging the code with the revised plan.
-
-## Principles
-
-- **Surgical edits, not rewrites.** Change what the user asked. Don't "improve" wording, reorder for style, or tighten unrelated task descriptions.

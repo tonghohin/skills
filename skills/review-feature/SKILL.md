@@ -29,10 +29,6 @@ Look for the gaps that matter: a requirement that isn't met, a bug, a check that
    - Read the files that call into the changed code. A change that looks correct in isolation can break its callers.
    - Then look where a symbol search stops: JSON an API returns, DB columns, wire formats, feature flags, other languages reading the same data, and the pinned source of any library the change depends on.
 
-3. Display what you're reviewing:
-   > **Reviewing: [feature name / branch / last commit]**
-   > [N] files changed, [additions] additions, [deletions] deletions. Plan: [path, or "none — reviewing against stated intent"].
-
 ## Step 2: Check Against the Plan
 
 Skip this step if no plan was loaded.
@@ -54,9 +50,7 @@ Read every changed line.
 - Logic that should exist but doesn't: validation, error handling, cleanup, a migration.
 
 ### Security
-- User input reaching a query, command, or HTML unchecked.
-- New endpoints or routes without the auth or ownership checks their neighbors have.
-- Credentials, keys, or tokens hardcoded or logged.
+- New endpoints or routes without the auth or ownership checks their neighbors have, user input reaching a query, command, or HTML unchecked, and credentials or tokens hardcoded or logged. For a full security pass, the user can run `/security-review`.
 
 ### Tests
 - Does each requirement and Done When check have a test or a check that covers it?
@@ -103,7 +97,7 @@ A claim you can't prove stays in the report, labeled with the level it reached.
 > A real problem that will bite later: a requirement with no test, a broken project rule, unverified evidence, a caller that will break. Should be fixed.
 
 For each finding:
-- **What:** one-line description of the issue.
+- **What:** one specific line. Not "this might have issues", but "`userId` can be null here because `getUser()` returns `null` when the session expires".
 - **Where:** file path and line number(s).
 - **Why:** what goes wrong if this isn't fixed.
 - **Proof:** the level it reached in Step 5, with the command and output if you ran something.
@@ -115,6 +109,7 @@ If a plan was loaded, add:
 
 > ### Plan vs. Implementation
 > - **Done When:** [N/M checks pass, with each failure named]
+> - **Tasks without evidence:** [every task marked `[x]` with no `Evidence` line, and every `Unverified` task, or "none" — check each task in the plan file, don't estimate]
 > - **Tasks completed as planned:** [list]
 > - **Deviations:** [what was changed and why, if detectable]
 > - **Missing from plan:** [tasks from the plan not reflected in the changes]
@@ -127,10 +122,6 @@ If a plan was loaded, add:
 >
 > **Safe because:** [the safety fact, and the level it reached — or "unproven"]
 >
+> **Reviewed:** [feature / branch / commit] against [plan path, or "stated intent"]
+>
 > [One sentence overall assessment — is this ready to ship, or does it need work?]
-
-## Principles
-
-- **Be specific.** "This might have issues" is useless. "Line 42: `userId` can be null here because `getUser()` returns `null` when the session expires" is useful.
-- **Prove, don't persuade.** A claim you ran beats a claim you argued. Always say which one you're giving.
-- **Fewer, right findings.** A report where every item is real gets acted on. One padded with maybes teaches the reader to skim, and the fixes it triggers add code nobody needed.

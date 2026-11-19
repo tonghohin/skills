@@ -1,8 +1,8 @@
 # Claude Code Skills
 
-A set of skills for structured development with Claude Code: plan before you build, revise plans as scope shifts, and review, debug, or refactor existing code with repeatable workflows.
+A set of skills for structured development with Claude Code: plan before you build, revise plans as scope shifts, and review or debug existing code with repeatable workflows.
 
-The core loop is plan → build → ship, with `/revise-plan` for mid-flight changes and `/open-pr` and `/address-review` to get the work merged. The remaining skills cover ticket writing, review, pull request review, debugging, refactoring, learning a new codebase, and stopping recurring mistakes — each is a standalone workflow, usable on its own.
+The core loop is plan → build → ship, with `/revise-plan` for mid-flight changes and `/open-pr` and `/address-review` to get the work merged. The remaining skills cover ticket writing, review, pull request review, debugging, learning a new codebase, and stopping recurring mistakes — each is a standalone workflow, usable on its own.
 
 ## How the plan → build loop works
 
@@ -54,7 +54,6 @@ The core loop is plan → build → ship, with `/revise-plan` for mid-flight cha
 | `/review-feature` | "review", "check my code", "review against the plan" | In a fresh context, check a change against its plan and Done When, re-run the build's evidence, and report only proven correctness gaps |
 | `/review-pr` | "review PR 123", "look at this PR", a pasted PR link | Read the intent → check design → verify each finding → draft a verdict and labeled inline comments → post to GitHub only when you say so |
 | `/debug-issue` | "debug", "fix this bug", "why is this broken" | Structured debugging: reproduce → isolate → fix → verify |
-| `/refactor` | "refactor", "restructure", "split this file" | Plan and execute a refactor with a test baseline |
 | `/learn-codebase` | "walk me through", "onboard me", "explain this repo" | Deep dive: explore the repo → trace real flows → save a record to `.claude/learn/` |
 | `/correct` | Manual: type `/correct` | Find repeated mistakes → fix each at the strongest level → prove the check fails on a past mistake |
 
@@ -219,14 +218,6 @@ Use `/review-feature` for your own uncommitted changes or a build from a plan, a
 ```
 
 Runs a structured debugging workflow: reproduce → isolate → fix → verify. If a bug won't reproduce at first, Claude tries recreating the trigger or adding temporary logging before asking you.
-
-### Refactor
-
-```
-/refactor extract the notification dispatch logic from UserService
-```
-
-Establishes a test baseline, plans the refactor, and executes it without changing behavior.
 
 ### Correct a recurring mistake
 

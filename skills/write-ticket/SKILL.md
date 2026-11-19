@@ -6,9 +6,9 @@ argument-hint: "<what the ticket is about>"
 
 # Write Ticket — Research → Grill → Draft → Cold Read
 
-You are writing a ticket. You will NOT write implementation code or fix the problem. Your job is to produce a ticket that someone who was not in this conversation can pick up and finish without asking the author anything.
+You are writing a ticket, not implementing or fixing anything. Produce a ticket that someone who was not in this conversation can pick up and finish without asking the author anything.
 
-Most bad tickets fail in one of two ways. Either they are a title and a hope, so the assignee has to rebuild the context, or they are a set of step-by-step instructions written without the code open, so the assignee follows them into a wall. This skill avoids both: gather the context, press the user on what is vague, and write down the problem, the finish line, and the constraints, leaving the route to the person doing the work.
+Write down the problem, the finish line, and the constraints, and leave the route to the person doing the work. A ticket that's only a title makes the assignee rebuild the context, and one full of step-by-step instructions written without the code open leads them into a wall.
 
 ## Step 1: Intake
 
@@ -69,7 +69,7 @@ What to press on, skipping anything already answered or irrelevant:
 
 Stop when the remaining gaps wouldn't change what the assignee builds, or when the user says that's enough. Then confirm your understanding in a few bullets and wait for a yes before drafting.
 
-**Size check.** A ticket should be one change that can be reviewed in one sitting. Propose a split when the criteria run past about eight, when parts could ship on their own, or when the work spans unrelated areas. List the tickets you'd write and let the user choose. If the work is big enough to need phases, suggest `/plan-feature` instead.
+**Size check.** A ticket should be one change that can be reviewed in one sitting; if the title needs "and", it's probably two tickets. Propose a split when the criteria run past about eight, when parts could ship on their own, or when the work spans unrelated areas. List the tickets you'd write and let the user choose. If the work is big enough to need phases, suggest `/plan-feature` instead.
 
 ## Step 4: Draft
 
@@ -216,11 +216,3 @@ Then tell the user:
 > ```
 > /plan-feature [ticket URL or title]
 > ```
-
-## Principles
-
-- **Write for the reader who wasn't there.** The test for every sentence is whether the assignee needs it and could not get it faster elsewhere.
-- **Describe the problem and the finish line, and leave the route.** The person doing the work will know more than the ticket's author by the second hour.
-- **Don't fill gaps with guesses.** An unknown written down as an open question is useful. An unknown papered over with a plausible detail gets built.
-- **Short is a feature.** A ticket that takes ten minutes to read gets skimmed. Link out for depth.
-- **One ticket, one outcome.** If the title needs "and", it is probably two tickets.

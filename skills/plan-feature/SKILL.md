@@ -1,6 +1,6 @@
 ---
 name: plan-feature
-description: "Research the codebase and create a detailed implementation plan for a new feature or project. Use when the user says 'plan', 'scope', 'break down', 'design', 'outline', 'how would I build', 'what would it take to', or wants to understand the approach before building. Also use when starting any new feature — planning should come before building. Produces a research summary, a Done When checklist, and a task breakdown, saved to .claude/plans/ so /build-feature can pick it up later."
+description: "Research the codebase and create a detailed implementation plan for a new feature, project, or larger refactor. Use when the user says 'plan', 'scope', 'break down', 'design', 'outline', 'how would I build', 'what would it take to', 'plan a refactor', or wants to understand the approach before building. Also use when starting any new feature — planning should come before building. Produces a research summary, a Done When checklist, and a task breakdown, saved to .claude/plans/ so /build-feature can pick it up later."
 argument-hint: "<feature description>"
 ---
 
@@ -24,32 +24,23 @@ Interview the user only for what they alone can decide: intent, scope, prioritie
 
 What to press on, skipping anything already answered or irrelevant:
 
-- **Scope & success criteria:** What does "done" look like? What's explicitly out of scope?
-- **User flow:** Walk through the happy path step by step. Who does what, in what order?
-- **Edge cases & errors:** What happens when input is invalid / missing / malformed? What if a network call or DB write fails? Are there retry or rollback needs?
-- **Data:** What data needs to be stored, read, or transformed? Any schema changes?
-- **Integrations:** Does this touch auth, payments, emails, third-party APIs, background jobs, or any existing feature area?
-- **UI/UX:** Any specific layout, loading states, empty states, or responsive behavior?
-- **Permissions & access control:** Who can access this? Any role or ownership checks?
-- **Performance & scale:** Any volume, latency, or caching concerns?
-- **Testing expectations:** Are there specific scenarios or edge cases you want covered by tests?
-- **Anything you're unsure about:** Is there any part of the feature you haven't fully decided yet?
+- **Done and out of scope:** What will be observably true when it's finished? What would a reader assume is included that isn't?
+- **Failure paths:** Invalid input, an empty state, a failed call or write. What should the user see?
+- **Data:** What gets stored or changed? Any schema changes?
+- **Access:** Who can use this? Any role or ownership checks?
+- **When the feature has them:** UI states (loading, empty, error), integrations it touches (auth, payments, email, third-party APIs, background jobs), volume or latency limits, and scenarios the user wants tested.
+- **Undecided parts:** Anything the user hasn't made up their mind about yet.
 
 After the last round, move on to research. The plan itself is where the user confirms your understanding, so there's no separate confirmation round.
 
 ## Step 2: Research
 
-Use subagents or direct exploration to understand the codebase. Be thorough — missing a relevant file now means a plan revision later.
+Research the codebase thoroughly — missing a relevant file now means a plan revision later. Beyond the obvious, make sure you find:
 
-- What is the project structure? (frameworks, languages, key directories)
-- Are there existing patterns for similar features? (auth, routing, state, API calls, DB access, tests)
-- What dependencies are relevant?
-- Are there any CLAUDE.md, README, or architecture docs?
-- What coding conventions does the project enforce or follow? (lint, format, and type-check config and the commands that run them; naming, error handling, and file layout in the code near the feature)
-- What testing patterns exist? (framework, conventions, coverage)
-- Check recent git history — are there in-flight changes or PRs touching the same areas? The plan should account for concurrent work.
-- Are there any existing types, interfaces, or schemas the new feature must conform to?
-- Are there any shared utilities, hooks, middleware, or services this feature should reuse?
+- **The nearest existing feature like this one.** The plan should follow its patterns, not introduce new ones.
+- **What to reuse:** shared utilities, middleware, services, and the types or schemas the feature must conform to.
+- **The enforced conventions:** the lint, format, type-check, and test commands, plus how nearby code names things and handles errors.
+- **Concurrent work:** recent commits and open PRs touching the same areas.
 
 If the feature involves a library, API, or technique you're unsure about, search docs or the web. Don't guess.
 
@@ -61,19 +52,9 @@ Then work out how an agent can check this work for real, because every Verify st
 
 Try what you find, as long as it has no side effects, so the plan rests on commands you've seen work. Don't install anything or change data to do this; record what you couldn't try and why. If the app is hard to launch and the project has no run skill, suggest `/run-skill-generator` in the plan's Notes so `/verify` can drive the app later.
 
-## Step 2.5: Think Before Writing
-
-Before drafting the plan, reason through these questions internally:
-
-- Are there any dependencies between tasks that could trip up the builder if ordered wrong?
-- Are there any implicit requirements the user didn't mention but that must be true for the feature to work? (e.g., a new API route needs auth middleware, a DB query needs a migration first)
-- Are there any edge cases from the clarification answers that don't yet have a task assigned to them?
-- Is there anything that could break existing functionality?
-- Are there any tasks that are larger than they appear and should be split?
-
-If this reasoning surfaces anything significant, add it to the plan's Notes section and flag it clearly.
-
 ## Step 3: Create the Plan
+
+Before writing, check that every edge case and failure path from Step 1 has a task, and that implicit requirements have one too (a new route needs auth, a new query needs its migration first).
 
 Write a plan document with this structure:
 
@@ -150,11 +131,14 @@ Guidelines for tasks:
 - The verify step should be concrete: a command to run, a behavior to check, not "make sure it works." Name the result you'd actually see, such as the output, response, or screen state. When a task has a user-facing surface, passing tests alone aren't enough: check the real thing. Build each verify step on the commands in How to Verify, so an agent can run it without help.
 - **Each phase should include a testing task.** Prefer unit tests over integration/e2e tests — they're faster and cheaper. Only add integration or e2e tests when the feature genuinely requires testing across boundaries (e.g., API + DB, multi-step UI flows). Don't write tests for trivial glue code or simple pass-through logic.
 
+For a refactor (restructuring code without changing behavior):
+- The first task records the test baseline. If the code has no tests, the first phase writes tests for its current behavior; type-checking and linting don't count as a baseline.
+- Order removal before reshaping: delete dead code, one-caller wrappers, and redundant checks first, then restructure what's left. Each reshape should remove branches or invalid states, not just add indirection.
+- Done When includes "every test that passed at the baseline still passes" and a check that the result is easier to follow: fewer files, branches, or concepts to hold in your head. Behavior changes go in a separate plan.
+
 ## Step 4: Save the Plan
 
-Plans live in the **repository**, not the user's home directory. The plans directory is `.claude/plans/` at the **repo root** — resolve it with `git rev-parse --show-toplevel` (or use the project working directory if not a git repo). Don't write to `~/.claude/`: that is the user's global Claude config folder, and plans saved there are invisible to `/build-feature` running in the repo. Use the absolute path `<repo-root>/.claude/plans/` when creating and writing files.
-
-1. Create the directory `<repo-root>/.claude/plans/` if it doesn't exist.
+1. Plans live in `<repo-root>/.claude/plans/` (resolve the root with `git rev-parse --show-toplevel`, or use the working directory outside git), never in `~/.claude/`, where `/build-feature` can't see them. Create the directory if it doesn't exist.
 2. Save the plan as `<repo-root>/.claude/plans/[feature-name].md` using a kebab-case slug derived from the feature name (e.g., `user-notifications.md`, `oauth-login.md`). If a plan with the same name already exists, ask the user whether to overwrite it or use a different name.
 3. Tell the user:
 
@@ -170,8 +154,7 @@ Plans live in the **repository**, not the user's home directory. The plans direc
 
 ## Principles
 
-- **No implementation code.** You're planning, not building. Don't create source files, install packages, or run migrations.
+- **No implementation code.** Don't create source files, install packages, or run migrations.
 - **Be specific.** "Update the API route" is a bad task. "Add a POST handler in `src/app/api/notifications/route.ts` that accepts `{userId, message, channel}` and writes to the notifications table" is a good task.
-- **Match existing patterns.** The plan should follow the conventions already in the codebase, not introduce new ones.
 - **Surface decisions, don't bury them.** If there's a meaningful choice (e.g., polling vs websockets), call it out in Notes so the user can weigh in before building.
 - **Code quality defaults.** Prefer specific types over `any` or type casts; if a task introduces a new type/schema, call it out. For runtime validation at boundaries (API input, parsed config, external data), reach for the idiomatic schema library in the stack — **Zod** for TypeScript, **Pydantic** for Python.

@@ -124,9 +124,3 @@ Then tell the user:
 > **Opened:** [URL] *(or "Not opened. The draft is above.")*
 >
 > When reviews come in, run `/address-review` to work through them. To have CI failures fixed automatically, try `/autofix-pr`.
-
-## Principles
-
-- **Nothing leaves without a yes.** Pushing, opening, and editing a PR each wait for the user.
-- **The description is a map, not a diary.** Say what changed, why, how it was proven, and where to look. Leave out how the work was done.
-- **Gaps up front.** A reviewer told where the risk is reviews the right lines.

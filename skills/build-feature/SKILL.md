@@ -33,13 +33,6 @@ Plans found when this skill started:
 
 5. Read the plan's `## Done When` section. If it's missing, write one from the tasks' Verify steps, add it to the plan, and mention that in the final summary.
 
-6. Display a brief summary:
-   > **Loading plan: [Feature Name]**
-   > [one-line description from the plan]
-   > [N] phases, [M] total tasks. [K already completed — resuming from Phase X, Task Y.]
-   >
-   > Building all phases now. I'll stop early only if something blocks the build.
-
 ## Step 2: Execute Phase by Phase
 
 For each phase in the plan, in order:
@@ -77,6 +70,7 @@ After all phases are done:
 2. Run linting and type-checking if applicable.
 3. Run every check in the plan's `## Done When` section and record the result next to each one in the plan file.
 4. Fix anything that broke or failed. If a Done When check still fails after 2 attempts, stop and report it rather than reviewing a build that isn't finished.
+5. Audit the plan file before moving on. Go through it line by line: every task marked `[x]` needs an `Evidence` line under it, and every Done When check needs its recorded result next to it. For each gap, run the check now and record the result; if it can't run, clear the `[x]` and add an `Unverified` line. The reviewer and the user both read this file as the record of what was proven.
 
 ## Step 4: Independent Review
 
@@ -134,10 +128,8 @@ Review the build with fresh eyes before reporting it done.
 ## Principles
 
 - **Follow the plan.** Don't add scope, refactor unrelated code, or introduce patterns not in the plan. If you spot something worth improving, note it in the follow-up items.
-- **Run to the end.** Stop early only when a fix fails twice, a task that later tasks depend on can't be verified, or the plan is wrong. Everything else goes in the summary.
+- **Run to the end.** Stop early only when a fix fails twice, a task that later tasks depend on can't be verified, or the plan is wrong. When you stop, say what happened, what you tried, and what you'd do next. Everything else goes in the summary.
 - **Working isn't the bar.** Passing verification is the minimum. Code also has to fit the codebase and hold up to the independent review, so write it as if the reviewer will read every line.
-- **Check the real thing.** Verify against the running code, not a proxy. Never hand the user a check you could have run yourself.
-- **Keep the user informed but not overwhelmed.** Show task and phase announcements. Don't narrate every file read or search.
-- **If something goes wrong,** explain what happened, what you tried, and propose a fix. Don't silently retry in a loop.
+- **Check the real thing.** Never hand the user a check you could have run yourself.
 - **Don't modify the plan's task list.** The user wrote/approved that plan — respect it. If a task needs a small adjustment, implement the spirit of it and record the deviation in the completion summary.
 - **Stop when the plan is wrong.** If the same kind of workaround keeps recurring, unrelated edge cases each need special handling, or types need escape hatches to compile, stop and tell the user. Suggest `/revise-plan` rather than building around it.

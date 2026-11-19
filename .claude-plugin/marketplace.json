@@ -10,7 +10,7 @@
     {
       "name": "dev",
       "source": "./",
-      "description": "Structured development skills: write tickets, plan, build, revise, review, review pull requests, debug, refactor, learn a codebase, and correct recurring mistakes.",
+      "description": "Structured development skills: write tickets, plan, build, revise, review, review pull requests, open pull requests and address their reviews, debug, learn a codebase, and correct recurring mistakes.",
       "version": "1.5.0"
     }
   ]

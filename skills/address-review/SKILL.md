@@ -135,10 +135,3 @@ Then tell the user:
 > **Addressed #[n]:** [N] fixed, [N] pushed back, [N] answered. [Pushed and posted / Not posted — drafts above.]
 >
 > **Open:** [threads still waiting on the reviewer or the user, or "none"]
-
-## Principles
-
-- **Check before you comply.** A comment is a claim about the code. Verify it the way you'd verify your own finding.
-- **Push back with evidence, not opinion.** A reply that cites the line and the test settles the thread; one that argues taste starts another round.
-- **Stay inside the PR.** A good idea that grows the scope becomes a follow-up, not a new commit.
-- **Nothing leaves without a yes.** Pushing and posting each wait for the user.
