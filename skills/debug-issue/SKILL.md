@@ -2,6 +2,7 @@
 name: debug-issue
 description: "Structured debugging workflow for tracking down and fixing bugs. Use when the user says 'debug', 'fix this bug', 'why is this broken', 'not working', 'something is wrong', or describes unexpected behavior they need resolved. Not for quick questions about what an error message means."
 argument-hint: "<description of the issue>"
+effort: high
 ---
 
 # Debug Issue — Reproduce → Isolate → Fix → Verify
@@ -15,7 +16,7 @@ You are debugging an issue. Follow a structured approach — don't guess and pat
    - **What's expected:** what should happen instead.
    - **When it happens:** specific trigger, input, or conditions (if known).
 
-2. If the user's description is too vague to act on (e.g., "it's broken"), ask ONE round of clarifying questions:
+2. If the user's description is too vague to act on (e.g., "it's broken"), ask one round of clarifying questions:
    - What were you doing when it happened?
    - Is there an error message or stack trace?
    - Did this work before? What changed?
@@ -28,7 +29,7 @@ You are debugging an issue. Follow a structured approach — don't guess and pat
 3. If you can't reproduce it at first, keep trying before you ask the user. Recreate the trigger with a script or test, tighten the conditions (same input, same data, same timing), or add temporary logging and read what the code actually does. If a `run` skill or a project verification skill is available, use it.
 4. If it still won't reproduce, tell the user what you tried and what specifically is stopping you, then ask for the detail you need. Remove any temporary logging before you finish.
 
-Do NOT skip this step. Fixing a bug you can't reproduce is guessing.
+Don't skip this step. Fixing a bug you can't reproduce is guessing.
 
 ## Step 3: Isolate
 

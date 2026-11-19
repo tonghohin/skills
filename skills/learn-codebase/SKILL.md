@@ -2,6 +2,8 @@
 name: learn-codebase
 description: "Deep dive into an unfamiliar codebase and write up how it works as a markdown record, saved to .claude/learn/. Traces real execution paths through the code rather than summarizing folders. Use when the user says 'learn this codebase', 'walk me through', 'onboard me', 'explain this repo', 'how does this project work', 'help me understand this code', 'I'm new to this codebase', 'give me a tour', 'document how this works', or wants to get up to speed on a project or subsystem, even if they don't say 'learn'. Runs without asking questions and does not change any code."
 argument-hint: "[area or question to focus on]"
+context: fork
+background: false
 ---
 
 # Learn Codebase — Explore → Trace → Write

@@ -17,7 +17,7 @@ You are refactoring existing code. The goal is to improve structure without chan
    - A pattern doesn't match the rest of the codebase.
    - Logic is tangled and hard to follow.
 
-2. If the scope is unclear, ask ONE round of clarifying questions. For example:
+2. If the scope is unclear, ask one round of clarifying questions. For example:
    - Should this be a structural change (moving files, extracting modules) or an in-place cleanup?
    - Are there parts of this code that should NOT be touched?
 

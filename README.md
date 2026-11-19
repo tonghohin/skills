@@ -9,8 +9,10 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
 ```
 /plan-feature add user notifications with email and in-app support
     │
+    ├── Asks only about decisions the code can't settle (or skips straight on)
     ├── Researches your codebase (structure, patterns, conventions)
     ├── Works out how to run and check the app
+    ├── Writes Done When: the pass/fail checks that mean it's finished
     ├── Creates a detailed task breakdown
     └── Saves to .claude/plans/user-notifications.md
 
@@ -20,8 +22,9 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
 /build-feature user-notifications
     │
     ├── Reads the saved plan
-    ├── Executes each task in order, skipping any already marked [x]
+    ├── Executes every phase in one go, skipping tasks already marked [x]
     ├── Verifies each task for real and saves the evidence in the plan
+    ├── Runs the plan's Done When checks
     ├── Runs an independent /review-feature and fixes Critical and Warning findings
     └── Updates the plan file with completion details
 ```
@@ -32,9 +35,9 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
 |-------|---------|--------------|
 | `/write-ticket` | "write a ticket", "file a bug", "create an issue" | Research codebase → interview you on the gaps → draft a ticket → file it in your tracker or hand back markdown |
 | `/plan-feature` | "plan", "scope", "break down", "design" | Research codebase → create task plan → save to `.claude/plans/` |
-| `/build-feature` | Manual: type `/build-feature` | Load plan from `.claude/plans/` → execute tasks → verify → independent review → summarize |
+| `/build-feature` | Manual: type `/build-feature` | Load plan from `.claude/plans/` → execute all phases in one go → verify → check Done When → independent review → summarize |
 | `/revise-plan` | "change the plan", "add a task to", "swap X for Y" | Edit an existing plan; preserves `[x]` markers so in-flight builds resume cleanly |
-| `/review-feature` | "review", "check my code", "audit" | Review changes for bugs, edge cases, security, consistency, and maintainability |
+| `/review-feature` | "review", "check my code", "review against the plan" | In a fresh context, check a change against its plan and Done When, re-run the build's evidence, and report only proven correctness gaps |
 | `/review-pr` | "review PR 123", "look at this PR", a pasted PR link | Read the intent → check design → verify each finding → draft a verdict and labeled inline comments → post to GitHub only when you say so |
 | `/debug-issue` | "debug", "fix this bug", "why is this broken" | Structured debugging: reproduce → isolate → fix → verify |
 | `/refactor` | "refactor", "restructure", "split this file" | Plan and execute a refactor with a test baseline |
@@ -115,7 +118,7 @@ Nothing is saved to the repo. If `gh` or a tracker tool is available, Claude off
 /plan-feature add OAuth2 login with Google and GitHub providers
 ```
 
-Claude researches your codebase, produces a task plan, and saves it to `.claude/plans/oauth-login.md`. Open that file, review the tasks, reorder them, edit descriptions, or remove things you don't want.
+Claude asks only about the decisions it can't settle from the code, in short rounds with a suggested answer for each question, and skips the questions entirely when your request is already specific. It then researches your codebase, produces a plan with a **Done When** checklist (the pass/fail checks that mean the feature is finished) and a task breakdown, and saves it to `.claude/plans/oauth-login.md`. Open that file, review the tasks, reorder them, edit descriptions, or remove things you don't want.
 
 ### Build from a plan
 
@@ -123,7 +126,11 @@ Claude researches your codebase, produces a task plan, and saves it to `.claude/
 /build-feature oauth-login
 ```
 
-Claude reads the plan, executes each task, runs its check, saves the command and output under the task as evidence, and moves on. If a check can't run, the task stays unchecked and is reported as unverified. Once all phases are done, a fresh subagent reviews the build: Critical findings get fixed, and Warnings and Suggestions come back for you to decide on. Claude then updates the plan file with a completion summary.
+Claude reads the plan and builds every phase in one go, without stopping between phases. For each task it runs the check, saves the command and output under the task as evidence, and moves on. If a check can't run, the task stays unchecked and is reported as unverified. Claude stops early only when something blocks the build: a fix fails twice, a task that later work depends on can't be verified, or the plan turns out to be wrong.
+
+Once all phases are done, Claude runs the plan's Done When checks, then `/review-feature` reviews the build in a fresh context. Critical and Warning findings in the new code get fixed, and anything outside the plan's scope comes back for you to decide on. Claude then updates the plan file with a completion summary.
+
+For a run nobody is watching, start it in auto mode. The Done When list also works as a [`/goal`](https://code.claude.com/docs/en/goal) condition.
 
 If you run `/build-feature` without a name, it'll list available plans and let you pick one. If the plan has some tasks already marked `[x]`, it resumes from the first incomplete task.
 
@@ -157,7 +164,7 @@ Runs the unchecked tasks — including any cleanup tasks — so plan and code co
 /review-feature
 ```
 
-Reviews the pending diff against a plan if one exists, or reviews standalone changes otherwise. Each Critical or Warning finding says how far it was proven, from a cited line up to a reproduction in the running app.
+Reviews the pending diff against its plan if one exists, or against the change's stated intent otherwise. It runs in a fresh context, so it never sees the reasoning that produced the code, and it can't edit files. With a plan, it checks every task, re-runs the build's evidence, and runs the Done When checks. It reports only Critical and Warning findings that affect correctness or the plan, and each one says how far it was proven, from a cited line up to a reproduction in the running app. Style and cleanup are left to the built-in `/simplify`, and a broad bug sweep to `/code-review`.
 
 ### Review a pull request
 
@@ -193,7 +200,7 @@ Establishes a test baseline, plans the refactor, and executes it without changin
 /correct plans keep getting saved to the wrong folder
 ```
 
-Finds where the mistake has happened before, then fixes it at the strongest level that works: architecture, types, a lint or CI check, a test, and docs only as a last resort. Each new check is proven against a real past mistake, and the rule goes in a table in `CLAUDE.md`. With no argument, it searches for repeats and asks which to fix before changing anything.
+Finds where the mistake has happened before, then fixes it at the strongest level that works: architecture, types, a lint or CI check, a test, a Claude Code hook or permission rule, and docs only as a last resort. Each new check is proven against a real past mistake. The rule is recorded in `.claude/enforced-rules.md`, and only rules nothing can enforce go into `CLAUDE.md`, which loads into every session. With no argument, it searches for repeats and asks which to fix before changing anything.
 
 ### Learn a codebase
 

@@ -8,7 +8,7 @@ argument-hint: "[feature-name] <what to change>"
 
 You are revising an existing plan **surgically**. The plan is a spec of what the code should look like *now*, not a changelog. Git carries history — the plan file doesn't need to.
 
-You are NOT building. You are NOT re-planning from scratch. You are editing the plan in place so that after your changes:
+You aren't building, and you aren't re-planning from scratch. You are editing the plan in place so that after your changes:
 - Every task describes what *should* exist in the code.
 - Tasks that match current code stay `[x]`.
 - Tasks whose code no longer matches the spec are cleared to `[ ]` so `/build-feature` will redo them.
@@ -18,13 +18,17 @@ You are NOT building. You are NOT re-planning from scratch. You are editing the 
 
 Plans live in `.claude/plans/` at the **repo root** (resolve with `git rev-parse --show-toplevel`), not in the user's home `~/.claude/` folder. Read from and write back to that repo path only.
 
+Plans found when this skill started:
+
+!`ls .claude/plans 2>/dev/null || true`
+
 1. Parse the argument. The first whitespace-separated token may be a plan name (e.g., `oauth-login`). Everything after it is the change request.
    - If the first token matches a file in `.claude/plans/`, treat it as the plan name and the rest as the change request.
    - Otherwise treat the whole argument as the change request and resolve the plan name as below.
 
 2. Resolve the plan file:
    - If a plan name was given → load `.claude/plans/[feature-name].md`.
-   - If not → list files in `.claude/plans/`. If there's one, use it. If there are several, ask the user which one.
+   - If not → use the list above. If there's one, use it. If there are several, ask the user which one.
    - If `.claude/plans/` is empty or doesn't exist:
      > No plan to revise. Run `/plan-feature [description]` first.
 
@@ -37,15 +41,20 @@ Plans live in `.claude/plans/` at the **repo root** (resolve with `git rev-parse
 
 ## Step 2: Understand the Change
 
-Restate the user's change request in one sentence. Then **always** run a targeted clarification interview before touching the plan. Since the plan already exists, keep questions focused on the revision itself — don't re-litigate the whole feature. Ask about as many of these as apply, grouped together:
+Restate the user's change request in one sentence. Then decide whether you need to ask anything. Since the plan already exists, keep questions to the revision itself — don't re-litigate the whole feature.
 
-- **Scope of change:** Is this the full extent of the revision, or are there related tasks that should also be updated at the same time?
+- **If the request is specific and touches only `[ ]` tasks,** skip the questions and go on. The summary in Step 6 lists every change, and the user reviews the plan before building.
+- **Otherwise, ask in one short round** of 2–4 questions, most important first. Use the question tool if one is available, and offer your best guess with each question so the user can confirm instead of composing an answer.
+
+Ask only what changes the edit:
+
 - **Built code fate:** If the change affects a task marked `[x]`, should the existing code be removed, rewritten, or kept as-is?
 - **Cascading impact:** Does this change affect other tasks elsewhere in the plan? Should those tasks be updated, cleared, or left alone?
+- **Scope of change:** Is this the full extent of the revision, or are there related tasks that should also be updated at the same time?
 - **New constraints:** Any new libraries, patterns, or architectural decisions the revised tasks should follow that differ from the current plan?
-- **Success criteria:** What does "done" look like after the revision? How will you know the plan reflects what you want?
+- **Success criteria:** Does "done" change? If so, what should the plan's Done When checks say now?
 
-Skip questions that are clearly irrelevant (e.g., no need to ask about built code fate if all affected tasks are `[ ]`). Do NOT proceed to Step 3 until the user has answered. Once you have answers, briefly confirm your understanding in 2–3 bullet points, then ask: "Does this capture the revision? Anything to add or change?" Only move forward after they confirm.
+Once the user answers, move on. There's no separate confirmation round.
 
 Classify the change — this determines Step 3 scope:
 
@@ -92,6 +101,10 @@ The rules below cover both built (`[x]`) and unbuilt (`[ ]`) tasks. For unbuilt 
 **Swapped approach (cascades):**
 - Treat each affected task as either Modified or Removed per the rules above. Often the cleanest path is to clear `[x]` on all affected tasks and add a single cleanup task at the top of the next phase covering what needs to be torn down.
 
+### Done When
+
+Keep the plan's `## Done When` checks in step with the revised scope: add a check for new behavior, delete checks for removed behavior, and rewrite checks whose expected result changed. If the plan has a `## Completed` section, clear the recorded result next to any check you changed, since it no longer proves anything.
+
 ### Numbering
 
 - Renumber freely so the plan reads cleanly top to bottom. `[x]` tasks don't need stable numbers — code doesn't care what number a task had.
@@ -99,7 +112,7 @@ The rules below cover both built (`[x]`) and unbuilt (`[ ]`) tasks. For unbuilt 
 
 ### Ambiguity
 
-If you're unsure whether built code should be removed or kept (e.g., a removed task touched a shared utility), **ask the user before adding or skipping a cleanup task**. Don't guess — the wrong choice either leaves dead code in the repo or deletes code something else depends on.
+If you're unsure whether built code should be removed or kept (e.g., a removed task touched a shared utility), ask the user before adding or skipping a cleanup task. Don't guess — the wrong choice either leaves dead code in the repo or deletes code something else depends on.
 
 ## Step 5: Log the Revision (lightly)
 

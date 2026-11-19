@@ -2,6 +2,8 @@
 name: review-pr
 description: "Review a pull request the way a careful teammate would: read the intent, check the design, verify every finding against the code, and draft a review with a verdict and inline comments labeled blocking or non-blocking. Use when the user says 'review PR 123', 'review this pull request', 'look at this PR', 'can you check <PR URL>', 'review my teammate's branch', 'what do you think of this PR', 're-review', or pastes a pull request link, even if they don't say 'review'. Posts the review to GitHub only when the user says to; otherwise hands back the draft. Not for your own uncommitted changes or a build from a plan; use /review-feature for those."
 argument-hint: "[PR number, URL, or branch]"
+effort: high
+disallowed-tools: Edit, NotebookEdit
 ---
 
 # Review PR — Understand → Read → Verify → Draft → Post
