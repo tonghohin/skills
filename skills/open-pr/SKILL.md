@@ -24,8 +24,12 @@ Plans found when this skill started:
 2. **Existing PR.** Check `gh pr view --json number,url,state,body` for this branch. If an open PR exists, offer to update its description instead of opening a new one.
 3. **Changes.** Read `git log <base>..HEAD` and `git diff <base>...HEAD --stat`, then the diff itself.
 4. **Plan.** Load `.claude/plans/[feature-name].md` from the repo root if a name was given. Otherwise pick the plan whose name matches the branch, or the one whose Files match the diff; if none fits, work from the commits. From the plan, take the intent, Done When and its recorded results, Evidence, `Unverified` tasks, and the `## Completed` section's Deviations, Needs a human, Review, and Follow-up items.
-5. **House style.** Use the repo's PR template if it has one (`.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE/`, or `docs/`). Read `CONTRIBUTING.md` and `CLAUDE.md` for PR rules. Skim the titles and bodies of a few recent merged PRs (`gh pr list --state merged -L 5 --json title,body`) for the team's conventions, such as conventional-commit titles or a ticket prefix.
-6. **Linked issue.** Find it in the plan, the branch name, or the commit messages. Use `Closes #N` only when you're sure the PR resolves it; otherwise use `Related to #N`.
+5. **PR template.** Look for one where GitHub does, ignoring case:
+   - `pull_request_template.md` in `.github/`, the repo root, or `docs/`.
+   - A `PULL_REQUEST_TEMPLATE/` folder in any of those places. It holds several templates; pick the one that fits this change (bug fix, feature, release), or ask the user if none clearly does.
+   - If the repo has none, the organization's default in its `.github` repo: `gh api repos/<owner>/.github/contents/.github/pull_request_template.md` (also try the root and `docs/` of that repo). A 404 means there isn't one.
+6. **House style.** Read `CONTRIBUTING.md` and `CLAUDE.md` for PR rules. Skim the titles and bodies of a few recent merged PRs (`gh pr list --state merged -L 5 --json title,body`) for the team's conventions, such as conventional-commit titles or a ticket prefix.
+7. **Linked issue.** Find it in the plan, the branch name, or the commit messages. Use `Closes #N` only when you're sure the PR resolves it; otherwise use `Related to #N`.
 
 ## Step 2: Check It's Ready
 
@@ -52,7 +56,15 @@ This skill doesn't fix code. If a check fails or the scan finds something, repor
 
 ### Description
 
-Fill the repo's template if there is one. Otherwise:
+If Step 1 found a template, it replaces the default layout below:
+
+- Keep its headings and order. Fill each section with the content the matching default section would hold.
+- Remove the `<!-- instruction -->` comments once you've followed them.
+- Tick a checklist box only for something you did or checked in this run. Leave the rest unticked, and say why under "Needs a closer look" if it matters, such as "Docs updated" when no docs changed.
+- If the template has no place for something important, such as unverified items or deviations, add a short section at the end rather than dropping it.
+- Keep a section the template marks as required even when it has little to say. Drop any other section that has nothing to say.
+
+Otherwise, use this layout:
 
 ```markdown
 ## Summary
