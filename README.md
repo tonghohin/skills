@@ -2,7 +2,7 @@
 
 A set of skills for structured development with Claude Code: plan before you build, revise plans as scope shifts, and review, debug, or refactor existing code with repeatable workflows.
 
-The core loop is plan → build, with `/revise-plan` for mid-flight changes. The remaining skills cover ticket writing, review, pull request review, debugging, refactoring, learning a new codebase, and stopping recurring mistakes — each is a standalone workflow, usable on its own.
+The core loop is plan → build → ship, with `/revise-plan` for mid-flight changes and `/open-pr` and `/address-review` to get the work merged. The remaining skills cover ticket writing, review, pull request review, debugging, refactoring, learning a new codebase, and stopping recurring mistakes — each is a standalone workflow, usable on its own.
 
 ## How the plan → build loop works
 
@@ -27,6 +27,18 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
     ├── Runs the plan's Done When checks
     ├── Runs an independent /review-feature and fixes Critical and Warning findings
     └── Updates the plan file with completion details
+
+/open-pr user-notifications
+    │
+    ├── Re-runs the checks and scans the diff for things that shouldn't go up
+    ├── Writes the PR description from the plan's results, gaps, and deviations
+    └── Pushes and opens the PR only when you say so
+
+/address-review
+    │
+    ├── Checks each review comment against the code
+    ├── Fixes the right ones as local commits, drafts evidence-backed replies to the rest
+    └── Pushes and posts replies only when you say so
 ```
 
 ## Skills
@@ -37,6 +49,8 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
 | `/plan-feature` | "plan", "scope", "break down", "design" | Research codebase → create task plan → save to `.claude/plans/` |
 | `/build-feature` | Manual: type `/build-feature` | Load plan from `.claude/plans/` → execute all phases in one go → verify → check Done When → independent review → summarize |
 | `/revise-plan` | "change the plan", "add a task to", "swap X for Y" | Edit an existing plan; preserves `[x]` markers so in-flight builds resume cleanly |
+| `/open-pr` | Manual: type `/open-pr` | Check the branch is ready → draft the PR title and description from the plan → push and open only when you say so |
+| `/address-review` | Manual: type `/address-review` | Triage review comments on your PR → fix the right ones → draft replies with evidence → push and post only when you say so |
 | `/review-feature` | "review", "check my code", "review against the plan" | In a fresh context, check a change against its plan and Done When, re-run the build's evidence, and report only proven correctness gaps |
 | `/review-pr` | "review PR 123", "look at this PR", a pasted PR link | Read the intent → check design → verify each finding → draft a verdict and labeled inline comments → post to GitHub only when you say so |
 | `/debug-issue` | "debug", "fix this bug", "why is this broken" | Structured debugging: reproduce → isolate → fix → verify |
@@ -44,7 +58,7 @@ The core loop is plan → build, with `/revise-plan` for mid-flight changes. The
 | `/learn-codebase` | "walk me through", "onboard me", "explain this repo" | Deep dive: explore the repo → trace real flows → save a record to `.claude/learn/` |
 | `/correct` | Manual: type `/correct` | Find repeated mistakes → fix each at the strongest level → prove the check fails on a past mistake |
 
-`/build-feature` and `/correct` change code across a project, so they only run when you type them. The others can also start from what you say.
+`/build-feature` and `/correct` change code across a project, and `/open-pr` and `/address-review` push code and notify people, so these four only run when you type them. The others can also start from what you say.
 
 ## Install
 
@@ -157,6 +171,26 @@ Then:
 ```
 
 Runs the unchecked tasks — including any cleanup tasks — so plan and code converge. If Claude is unsure whether built code should be removed or kept (e.g., a shared utility), it asks before adding the cleanup task.
+
+### Open a pull request
+
+```
+/open-pr oauth-login
+```
+
+Claude re-runs the tests, lint, type-check, and the plan's Done When checks, then scans the diff for secrets, debug leftovers, and files that look unintended. It doesn't fix anything here: if something fails, it asks whether to fix it first, open a draft, or go ahead. It then writes the title and description from the plan: what changed and why, how it was tested, and a "Needs a closer look" section for deviations and anything unverified. With no plan, it works from the commits. It follows your repo's PR template and title conventions if it finds them, and adds no "Generated with Claude Code" line.
+
+You see the full draft first. Claude pushes the branch and runs `gh pr create` only when you say so, and never force-pushes. If the branch already has an open PR, it offers to update that description instead.
+
+### Address review comments
+
+```
+/address-review 123
+```
+
+With no argument, it picks up the PR for the current branch. Claude reads every open review thread and checks each comment against the code before acting on it. It then sorts them: fix, push back (with evidence), answer, your call, or already done. You confirm that triage and decide the judgment calls before any code changes.
+
+Fixes become local commits, with a test when a comment points at a bug. Each thread gets a drafted reply: a short "fixed in `abc1234`", or a pushback that cites the line and the test. Claude never rewrites history already on the remote. It pushes and posts the replies only when you say so, and leaves threads for the reviewer to resolve.
 
 ### Review changes
 
