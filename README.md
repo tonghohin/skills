@@ -9,7 +9,7 @@ The core loop is plan → build → ship, with `/revise-plan` for mid-flight cha
 ```
 /plan-feature add user notifications with email and in-app support
     │
-    ├── Asks only about decisions the code can't settle (or skips straight on)
+    ├── Asks about each open decision that would change what gets built, and nothing else
     ├── Researches your codebase (structure, patterns, conventions)
     ├── Works out how to run and check the app
     ├── Writes Done When: the pass/fail checks that mean it's finished
@@ -131,7 +131,7 @@ Nothing is saved to the repo. If `gh` or a tracker tool is available, Claude off
 /plan-feature add OAuth2 login with Google and GitHub providers
 ```
 
-Claude asks only about the decisions it can't settle from the code, in short rounds with a suggested answer for each question, and skips the questions entirely when your request is already specific. It then researches your codebase, produces a plan with a **Done When** checklist (the pass/fail checks that mean the feature is finished) and a task breakdown, and saves it to `.claude/plans/oauth-login.md`. Open that file, review the tasks, reorder them, edit descriptions, or remove things you don't want.
+Claude checks each decision the feature needs and asks about the ones that would change what gets built and that neither your request nor the code settles, in short rounds with a suggested answer for each. A vague request gets questions; a fully specified one gets none, with a line saying which decisions your request settled. It then researches your codebase, produces a plan with a **Done When** checklist (the pass/fail checks that mean the feature is finished) and a task breakdown, and saves it to `.claude/plans/oauth-login.md`. Open that file, review the tasks, reorder them, edit descriptions, or remove things you don't want.
 
 ### Build from a plan
 

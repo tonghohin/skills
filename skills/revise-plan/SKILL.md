@@ -43,8 +43,8 @@ Plans found when this skill started:
 
 Restate the user's change request in one sentence. Then decide whether you need to ask anything. Since the plan already exists, keep questions to the revision itself — don't re-litigate the whole feature.
 
-- **If the request is specific and touches only `[ ]` tasks,** skip the questions and go on. The summary in Step 6 lists every change, and the user reviews the plan before building.
-- **Otherwise, ask in one short round** of 2–4 questions, most important first. Use the question tool if one is available, and offer your best guess with each question so the user can confirm instead of composing an answer.
+- **Decide by checking each question below, not by how the request reads overall.** Ask one only if a different answer would change the edit and neither the request nor the plan settles it. Built code fate, for example, is open whenever the change touches a `[x]` task and the request doesn't say what happens to its code. If nothing is open, don't ask.
+- **Ask in one short round** of 2–4 questions, most important first. Use the question tool if one is available, and offer your best guess with each question so the user can confirm instead of composing an answer.
 
 Ask only what changes the edit:
 
