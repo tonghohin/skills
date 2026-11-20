@@ -16,8 +16,11 @@ Then take a quick look at the code the feature touches, enough to propose answer
 
 Interview the user only for what they alone can decide: intent, scope, priorities, and trade-offs. If the answer is a fact you can get by reading or running the code, find it out during research instead of asking.
 
-- **If the request already says what done looks like and leaves no real decision open,** skip the interview. List the assumptions you're making in a few bullets and move on. The user reviews the plan before anything is built, so an assumption written down there is cheap to correct.
-- **Otherwise, ask in short rounds** of 2–4 questions, most important first. Use the question tool if one is available. Offer your best guess with each question, drawn from what you saw in the code, so the user can confirm instead of composing an answer.
+- **Decide whether to ask by checking each decision, not by how the request reads overall.** List the decisions this feature needs, using the list below. For each one, ask two things: would a different answer change what gets built, and does the request or the code already settle it? Ask about every decision that would change the build and isn't settled. Don't ask about the rest.
+  - A request that sounds simple can still leave a decision open: "add due-date reminders" doesn't say how a reminder reaches the user.
+  - A short request can also settle everything: "add a `--version` flag that prints the version from `pyproject.toml`" has nothing to ask.
+  - When no decision is open, don't ask anything. Say in one line which decisions the request settled.
+- **Ask in short rounds** of 2–4 questions, most important first. Use the question tool if one is available. Offer your best guess with each question, drawn from what you saw in the code, so the user can confirm instead of composing an answer.
 - **Don't accept an answer you couldn't test.** "Fast" needs a number. "Handle errors" needs to say which errors and what the user sees. Ask again, with an example of a testable answer.
 - **When the user doesn't know,** don't push them to invent an answer. Record it as an open question in the plan's Notes.
 - **Stop** when the remaining gaps wouldn't change the plan, or when the user says that's enough.
@@ -144,7 +147,7 @@ For a refactor (restructuring code without changing behavior):
 
 > **Plan saved to `.claude/plans/[feature-name].md`**
 >
-> [If you skipped the interview: the assumptions you made, in a few bullets.]
+> [If you asked nothing: the decisions the request settled, in a few bullets.]
 >
 > Review it, edit anything you'd like to change, then run:
 > ```
