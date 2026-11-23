@@ -49,7 +49,7 @@ The core loop is plan → build → ship, with `/revise-plan` for mid-flight cha
 | `/plan-feature` | "plan", "scope", "break down", "design" | Research codebase → create task plan → save to `.claude/plans/` |
 | `/build-feature` | Manual: type `/build-feature` | Load plan from `.claude/plans/` → execute all phases in one go → verify → check Done When → independent review → summarize |
 | `/revise-plan` | "change the plan", "add a task to", "swap X for Y" | Edit an existing plan; preserves `[x]` markers so in-flight builds resume cleanly |
-| `/open-pr` | Manual: type `/open-pr` | Check the branch is ready → draft the PR title and description from the plan → push and open only when you say so |
+| `/open-pr` | Manual: type `/open-pr` | Check the branch is ready → write the PR title and description from the plan → push and open it as a draft PR → mark it ready and request reviewers only when you say so |
 | `/address-review` | Manual: type `/address-review` | Triage review comments on your PR → fix the right ones → draft replies with evidence → push and post only when you say so |
 | `/review-feature` | "review", "check my code", "review against the plan" | In a fresh context, check a change against its plan and Done When, re-run the build's evidence, and report only proven correctness gaps |
 | `/review-pr` | "review PR 123", "look at this PR", a pasted PR link | Read the intent → check design → verify each finding → draft a verdict and labeled inline comments → post to GitHub only when you say so |
@@ -177,9 +177,9 @@ Runs the unchecked tasks — including any cleanup tasks — so plan and code co
 /open-pr oauth-login
 ```
 
-Claude re-runs the tests, lint, type-check, and the plan's Done When checks, then scans the diff for secrets, debug leftovers, and files that look unintended. It doesn't fix anything here: if something fails, it asks whether to fix it first, open a draft, or go ahead. It then writes the title and description from the plan: what changed and why, how it was tested, and a "Needs a closer look" section for deviations and anything unverified. With no plan, it works from the commits. It follows your repo's PR template and title conventions if it finds them, and adds no "Generated with Claude Code" line.
+Claude re-runs the tests, lint, type-check, and the plan's Done When checks, then scans the diff for secrets, debug leftovers, and files that look unintended. It doesn't fix anything here. Failing checks go in the description, but a secret in the diff stops it before anything is pushed. It then writes the title and description from the plan: what changed and why, how it was tested, and a "Needs a closer look" section for deviations and anything unverified. With no plan, it works from the commits. It follows your repo's PR template and title conventions if it finds them, and adds no "Generated with Claude Code" line.
 
-You see the full draft first. Claude pushes the branch and runs `gh pr create` only when you say so, and never force-pushes. If the branch already has an open PR, it offers to update that description instead.
+Claude then pushes the branch and opens the PR as a GitHub draft, so you review it there and not in the terminal. A draft doesn't request reviews, but repo watchers and CI still see it, so the description has no @mentions. Claude updates the description when you ask, and runs `gh pr ready` and requests reviewers only when you say so. It never force-pushes. If the branch already has a draft PR, it updates that one.
 
 ### Address review comments
 

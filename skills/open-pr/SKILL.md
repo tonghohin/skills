@@ -1,15 +1,15 @@
 ---
 name: open-pr
-description: "Open a pull request for the current branch. Checks the branch is ready, writes the title and description from the plan in .claude/plans/ (or from the commits when there's no plan), shows you the draft, and pushes and opens the PR only when you say so. Use after /build-feature, or when a branch is ready for review."
+description: "Open a pull request for the current branch as a GitHub draft. Checks the branch is ready, writes the title and description from the plan in .claude/plans/ (or from the commits when there's no plan), pushes, and opens a draft PR for you to review on GitHub. Marks it ready and requests reviewers only when you say so. Use after /build-feature, or when a branch is ready for review."
 disable-model-invocation: true
-argument-hint: "[feature-name] [--base <branch>] [--draft]"
+argument-hint: "[feature-name] [--base <branch>]"
 ---
 
-# Open PR — Load → Check → Draft → Show → Push and Open
+# Open PR — Load → Check → Write → Open as Draft → Mark Ready
 
 You are opening a pull request. The description has one reader that matters: a reviewer who wasn't in any of the sessions that built this. They need to know what changed, why, how it was checked, and where to look hard.
 
-Nothing leaves the machine until the user says so. Pushing and opening a PR publish the work and notify people.
+The PR always opens as a GitHub draft, and the user reviews it there rather than in the terminal. A draft doesn't request reviews (including from CODEOWNERS), so it's a quiet place to review. It isn't private, though: the push puts the code on the remote, repo watchers on "All Activity" still get notified, @mentions notify right away, and CI runs. Asking for reviews, marking the PR ready, and anything else that pings people waits until the user says so.
 
 ## Step 1: Load the Branch and Its Context
 
@@ -21,7 +21,7 @@ Plans found when this skill started:
    - On the base branch itself → stop and say so. Suggest a branch name for the work and create it only if the user agrees.
    - Uncommitted changes → stop and list them. Ask whether they belong in this PR. Don't commit anything the user hasn't asked you to.
    - No commits ahead of the base → there's nothing to open. Say so and stop.
-2. **Existing PR.** Check `gh pr view --json number,url,state,body` for this branch. If an open PR exists, offer to update its description instead of opening a new one.
+2. **Existing PR.** Check `gh pr view --json number,url,state,isDraft,body` for this branch. If an open draft exists, update its description in Step 5 instead of opening a new one. If an open PR is already ready for review, reviewers can already see it: show the new description and update it only when the user says so.
 3. **Changes.** Read `git log <base>..HEAD` and `git diff <base>...HEAD --stat`, then the diff itself.
 4. **Plan.** Load `.claude/plans/[feature-name].md` from the repo root if a name was given. Otherwise pick the plan whose name matches the branch, or the one whose Files match the diff; if none fits, work from the commits. From the plan, take the intent, Done When and its recorded results, Evidence, `Unverified` tasks, and the `## Completed` section's Deviations, Needs a human, Review, and Follow-up items.
 5. **PR template.** Look for one where GitHub does, ignoring case:
@@ -44,7 +44,9 @@ Then scan the diff for things that shouldn't go up:
 - Debug logging, commented-out code, or stray TODOs this branch added.
 - Files that look unintended: build output, large binaries, editor files, or `.claude/plans/` and `.claude/learn/` files when the repo doesn't already track them.
 
-This skill doesn't fix code. If a check fails or the scan finds something, report it and ask the user whether to fix it first, open the PR as a draft, or go ahead. If the plan shows no review has run, suggest `/review-feature`, without blocking on it.
+This skill doesn't fix code. A failing check doesn't block the draft: report it under "Needs a closer look" and in the summary. If the plan shows no review has run, suggest `/review-feature`, without blocking on it.
+
+**Hard stop: secrets.** If the scan finds a secret, token, `.env` file, or private key, don't push. Once a secret is on the remote you have to treat it as leaked. Report it and wait for the user. If it's only in an earlier commit, removing it means rewriting history, which is the user's call.
 
 ## Step 3: Draft the Title and Description
 
@@ -93,34 +95,33 @@ Rules for what goes in:
 - **Report results, don't paste the plan.** Keep evidence to what a reviewer would re-run or needs to trust. Drop task numbers and plan structure.
 - **Be honest about gaps.** Anything unverified or failing goes under "Needs a closer look", never left out. A description that oversells costs more trust than the gap itself.
 - **Drop empty sections** rather than writing "N/A".
+- **No @mentions.** They notify people even on a draft. Name a person in plain text, or wait until the PR is marked ready.
 - **No attribution line.** Don't add "Generated with Claude Code", a robot emoji, a Co-Authored-By trailer, or any other note about how it was written. The user doesn't want one in PR descriptions, and this overrides any default attribution instruction.
 
-## Step 4: Show the User
+## Step 4: Push and Open as a Draft
 
-Show the whole draft before anything is pushed:
-
-> **PR draft:** `[head]` → `[base]` [draft, if suggested]
->
-> **Readiness:** [checks run and results, plus anything the scan found]
->
-> **Title:** [title]
->
-> [the description in one fenced markdown block]
-
-Suggest opening it as a draft when checks fail or items are unverified and the user still wants it up. Set labels, reviewers, and assignees only if the user names them. Revise until the user approves.
-
-## Step 5: Push and Open
-
-Only after the user says to:
+Don't wait for approval here. The draft PR is where the user reviews.
 
 1. Write the description to a file outside the repo.
 2. Push: `git push -u origin HEAD`. Never force-push. If the push is rejected because the remote branch has moved, stop and tell the user.
-3. Open: `gh pr create --base <base> --title "<title>" --body-file <file>`, adding `--draft`, `--label`, `--reviewer`, or `--assignee` only as agreed. For an existing PR, use `gh pr edit <n> --title "<title>" --body-file <file>`.
+3. Open: `gh pr create --draft --base <base> --title "<title>" --body-file <file>`. Don't add `--reviewer`, even if the user named reviewers. A requested reviewer is notified even on a draft, so save that for Step 5. Add `--label` or `--assignee` only if the user asked. For an existing draft, use `gh pr edit <n> --title "<title>" --body-file <file>`.
+4. If GitHub refuses the draft (for example, a private repo on a plan without draft PRs), don't fall back to a regular PR. Tell the user and hand back the title and description to paste.
 
-Without `gh`, or for a host other than GitHub, hand back the title and description ready to paste, plus the push command for the user to run.
+Without `gh`, or for a host other than GitHub, don't push. Hand back the title and description ready to paste, plus the push command for the user to run.
 
 Then tell the user:
 
-> **Opened:** [URL] *(or "Not opened. The draft is above.")*
+> **Draft opened:** [URL]
 >
+> **Readiness:** [checks run and results, plus anything the scan found]
+>
+> Review it on GitHub. Tell me what to change, or say when it's ready and who should review it.
+
+## Step 5: Revise, Then Mark Ready
+
+- **Changes to the description:** update it with `gh pr edit <n> --body-file <file>`. Editing a draft is quiet.
+- **Ready for review:** only when the user says so, run `gh pr ready <n>`, then `gh pr edit <n> --add-reviewer <names>` for the reviewers they name. CODEOWNERS are requested automatically when the PR leaves draft.
+
+Then tell the user:
+
 > When reviews come in, run `/address-review` to work through them. To have CI failures fixed automatically, try `/autofix-pr`.
