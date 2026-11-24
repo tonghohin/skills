@@ -144,24 +144,20 @@ How to write one:
 
 ### Summary
 
-The review body. Short, because the detail lives in the inline comments.
+The review body. Keep it brief: the detail lives in the inline comments, and the summary only points to them.
 
-Always open with exactly "Good work!", whatever the verdict. The author put effort in, and a review that requests changes lands better when it starts by saying so. Keep it to those few words; the rest of the summary stays about what needs to change.
+Always open with exactly "Good work!", whatever the verdict. The author put effort in, and a review that requests changes lands better when it starts by saying so. After that, list what the inline comments ask for, one short line each, blocking first. Don't describe what the PR does; the author knows. Don't restate the reasoning, the fix, or the overall read either; those are in the comments.
 
 ```markdown
-Good work! [One or two sentences: what the change does and your overall read.]
+Good work!
 
-**Blocking**
-- [One line each, pointing to the inline comment. Omit the section if empty.]
-
-**Non-blocking**
-- [The few worth naming here, plus any collected nitpicks.]
-
-**Checked:** [what you verified and how: read, traced, ran which tests.]
-**Not checked:** [what you didn't: files skimmed, behavior not run, areas outside your depth that need another reviewer.]
+- [Blocking: one short line naming what to fix.]
+- [Non-blocking: one short line each.]
 ```
 
-Put findings that have no line in the diff here too, such as a design concern or something missing.
+A finding with no line in the diff, such as a design concern or something missing, has no inline comment to point to, so give it its own line here with enough detail to act on.
+
+What you checked and what you didn't goes in the report to the user in Step 6, not in the posted summary.
 
 ## Step 6: Show the User, Then Post
 
@@ -199,4 +195,6 @@ Then tell the user:
 >
 > **Verdict:** [Approve / Request changes / Comment] — [Blocking: N] [Non-blocking: N] [Questions: N]
 >
-> **Not checked:** [what the review didn't cover, or "nothing"]
+> **Checked:** [what you verified and how: read, traced, ran which tests]
+>
+> **Not checked:** [what the review didn't cover: files skimmed, behavior not run, areas that need another reviewer; or "nothing"]

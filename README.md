@@ -207,7 +207,7 @@ Reviews the pending diff against its plan if one exists, or against the change's
 
 Takes a PR number, a URL, or a branch; with no argument it reviews the PR for the current branch. Claude reads the description, linked issue, CI status, and earlier review comments, then checks the PR's code out into a separate worktree so your working tree isn't touched. It reviews design first and lines second, and tries to disprove each finding before keeping it: confirmed problems become issues, unconfirmed ones become questions, and anything CI or another reviewer already covers is dropped.
 
-The draft has a recommended verdict, a short summary that says what was and wasn't checked, and inline comments labeled blocking or non-blocking, in [Conventional Comments](https://conventionalcomments.org/) style unless your team has its own. Nothing is posted until you say so. When you do, it goes up as a single review under your account, with the verdict you chose. It needs the `gh` CLI logged in to read and post on GitHub; without it, Claude reviews the branch diff and hands back markdown.
+The draft has a recommended verdict, a short summary listing what the comments ask for, and inline comments labeled blocking or non-blocking, in [Conventional Comments](https://conventionalcomments.org/) style unless your team has its own. What was and wasn't checked is reported to you, not posted. Nothing is posted until you say so. When you do, it goes up as a single review under your account, with the verdict you chose. It needs the `gh` CLI logged in to read and post on GitHub; without it, Claude reviews the branch diff and hands back markdown.
 
 Use `/review-feature` for your own uncommitted changes or a build from a plan, and `/review-pr` for a pull request.
 
