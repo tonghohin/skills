@@ -152,8 +152,7 @@ If you aren't in plan mode, go straight to Step 5.
 ## Step 5: Save the Plan
 
 1. Plans live in `<repo-root>/.claude/plans/` (resolve the root with `git rev-parse --show-toplevel`, or use the working directory outside git), never in `~/.claude/`, where `/build-feature` can't see them. Create the directory if it doesn't exist.
-2. Save the plan as `<repo-root>/.claude/plans/[feature-name].md` using a kebab-case slug derived from the feature name (e.g., `user-notifications.md`, `oauth-login.md`). If a plan with the same name already exists, ask the user whether to overwrite it or use a different name. If plan mode's draft is already in `.claude/plans/` (the `plansDirectory` setting puts it there, under a name Claude Code chose), move it to the new name rather than writing a copy, so no draft is left behind.
-3. Tell the user:
+2. Save the plan as `<repo-root>/.claude/plans/[feature-name].md` using a kebab-case slug derived from the feature name (e.g., `user-notifications.md`, `oauth-login.md`). If a plan with the same name already exists, ask the user whether to overwrite it or use a different name.3. Tell the user:
 
 > **Plan saved to `.claude/plans/[feature-name].md`**
 >

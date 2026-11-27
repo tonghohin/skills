@@ -212,8 +212,6 @@ The ticket's home is the team's tracker, so don't save it to a file in the repo.
 - **File it.** If the `gh` CLI or a tracker tool is available, offer to file it, and say where it will go before you do. Filing publishes the ticket and notifies people, so do it only when the user says to. Set only the labels, assignees, and priority the user gave you. The title goes in the tracker's title field, so leave the `# [Title]` line and any field the tracker holds separately, such as Type, out of the body.
 - **Hand it over.** Otherwise, give the final title on its own line and the body in a single fenced markdown block, so the user can copy each into the tracker without picking it out of the conversation.
 
-If plan mode's draft of the ticket is in `.claude/plans/` (the `plansDirectory` setting puts it there), delete it now, so it isn't mistaken for a plan later.
-
 Then tell the user:
 
 > **Filed:** [URL] *(or "Not filed. The ticket is above, ready to paste.")*

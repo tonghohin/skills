@@ -23,7 +23,7 @@ Plans found when this skill started:
    - No commits ahead of the base → there's nothing to open. Say so and stop.
 2. **Existing PR.** Check `gh pr view --json number,url,state,isDraft,body` for this branch. If an open draft exists, update its description in Step 5 instead of opening a new one. If an open PR is already ready for review, reviewers can already see it: show the new description and update it only when the user says so.
 3. **Changes.** Read `git log <base>..HEAD` and `git diff <base>...HEAD --stat`, then the diff itself.
-4. **Plan.** Load `.claude/plans/[feature-name].md` from the repo root if a name was given. Otherwise pick the plan whose name matches the branch (only files that start with `# Plan:` are plans; skip leftover plan-mode drafts), or the one whose Files match the diff; if none fits, work from the commits. From the plan, take the intent, Done When and its recorded results, Evidence, `Unverified` tasks, and the `## Completed` section's Deviations, Needs a human, Review, and Follow-up items.
+4. **Plan.** Load `.claude/plans/[feature-name].md` from the repo root if a name was given. Otherwise pick the plan whose name matches the branch, or the one whose Files match the diff; if none fits, work from the commits. From the plan, take the intent, Done When and its recorded results, Evidence, `Unverified` tasks, and the `## Completed` section's Deviations, Needs a human, Review, and Follow-up items.
 5. **PR template.** Look for one where GitHub does, ignoring case:
    - `pull_request_template.md` in `.github/`, the repo root, or `docs/`.
    - A `PULL_REQUEST_TEMPLATE/` folder in any of those places. It holds several templates; pick the one that fits this change (bug fix, feature, release), or ask the user if none clearly does.
