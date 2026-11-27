@@ -4,7 +4,7 @@ description: "Revise an existing implementation plan in .claude/plans/. Use when
 argument-hint: "[feature-name] <what to change>"
 ---
 
-# Revise Plan — Load → Understand Change → Re-research (if needed) → Rewrite Surgically → Save
+# Revise Plan — Plan Mode → Load → Understand Change → Re-research (if needed) → Rewrite Surgically → Approve → Save
 
 You are revising an existing plan **surgically**. The plan is a spec of what the code should look like *now*, not a changelog. Git carries history — the plan file doesn't need to.
 
@@ -13,6 +13,10 @@ You aren't building, and you aren't re-planning from scratch. You are editing th
 - Tasks that match current code stay `[x]`.
 - Tasks whose code no longer matches the spec are cleared to `[ ]` so `/build-feature` will redo them.
 - Tasks that were removed from scope are deleted — and if built code needs to go with them, a new cleanup task is added to delete that code.
+
+## Step 0: Enter Plan Mode
+
+Before anything else, call `EnterPlanMode`, so the session stays read-only while you work out the revision. Skip this if the session is already in plan mode, or if the tool isn't available, and carry on.
 
 ## Step 1: Load the Plan
 
@@ -126,7 +130,13 @@ Add a dated line to the `## Notes` section:
 
 This is the only breadcrumb kept in the plan itself. Full history lives in git.
 
-## Step 6: Save and Summarize
+## Step 6: Get Approval
+
+If you're in plan mode, write the revision wherever plan mode tells you to: the list of changes, then every section of the plan you rewrote, as it will read after the change. Call `ExitPlanMode` to show it to the user for approval. If they reject it with feedback, adjust and call `ExitPlanMode` again. Don't touch the plan file until they approve.
+
+If you aren't in plan mode, go straight to Step 7.
+
+## Step 7: Save and Summarize
 
 1. Overwrite `.claude/plans/[feature-name].md`.
 

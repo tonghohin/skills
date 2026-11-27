@@ -4,9 +4,13 @@ description: "Research the codebase and create a detailed implementation plan fo
 argument-hint: "<feature description>"
 ---
 
-# Plan Feature — Understand → Research → Plan → Save
+# Plan Feature — Plan Mode → Understand → Research → Plan → Approve → Save
 
 You are creating an implementation plan. You don't write implementation code. Your job is to research, think, and produce a plan that `/build-feature` can execute later.
+
+## Step 0: Enter Plan Mode
+
+Before anything else, call `EnterPlanMode`, so the session stays read-only while you plan. Skip this if the session is already in plan mode, or if the tool isn't available, and carry on.
 
 ## Step 1: Understand the Request
 
@@ -139,7 +143,13 @@ For a refactor (restructuring code without changing behavior):
 - Order removal before reshaping: delete dead code, one-caller wrappers, and redundant checks first, then restructure what's left. Each reshape should remove branches or invalid states, not just add indirection.
 - Done When includes "every test that passed at the baseline still passes" and a check that the result is easier to follow: fewer files, branches, or concepts to hold in your head. Behavior changes go in a separate plan.
 
-## Step 4: Save the Plan
+## Step 4: Get Approval
+
+If you're in plan mode, write the full plan wherever plan mode tells you to, then call `ExitPlanMode` to show it to the user for approval. If they reject it with feedback, revise the plan and call `ExitPlanMode` again. Don't save anything to `.claude/plans/` until they approve.
+
+If you aren't in plan mode, go straight to Step 5.
+
+## Step 5: Save the Plan
 
 1. Plans live in `<repo-root>/.claude/plans/` (resolve the root with `git rev-parse --show-toplevel`, or use the working directory outside git), never in `~/.claude/`, where `/build-feature` can't see them. Create the directory if it doesn't exist.
 2. Save the plan as `<repo-root>/.claude/plans/[feature-name].md` using a kebab-case slug derived from the feature name (e.g., `user-notifications.md`, `oauth-login.md`). If a plan with the same name already exists, ask the user whether to overwrite it or use a different name.
@@ -149,7 +159,7 @@ For a refactor (restructuring code without changing behavior):
 >
 > [If you asked nothing: the decisions the request settled, in a few bullets.]
 >
-> Review it, edit anything you'd like to change, then run:
+> Edit anything you'd like to change, then run:
 > ```
 > /build-feature [feature-name]
 > ```
