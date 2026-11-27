@@ -19,7 +19,7 @@ Plans found when this skill started:
 
 1. Check if the user provided a feature name as an argument (e.g., `/build-feature user-notifications`).
    - If yes → look for `.claude/plans/[feature-name].md`
-   - If no argument → use the list above. If there's only one plan, use it automatically. Otherwise ask the user which plan to execute.
+   - If no argument → use the list above. Count only files that start with `# Plan:`; anything else is a leftover plan-mode draft, not a plan. If there's only one plan, use it automatically. Otherwise ask the user which plan to execute.
 
 2. If the plan file doesn't exist or `.claude/plans/` is empty:
 

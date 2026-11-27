@@ -32,7 +32,7 @@ Plans found when this skill started:
 
 2. Resolve the plan file:
    - If a plan name was given → load `.claude/plans/[feature-name].md`.
-   - If not → use the list above. If there's one, use it. If there are several, ask the user which one.
+   - If not → use the list above. Count only files that start with `# Plan:`; anything else is a leftover plan-mode draft, not a plan. If there's one, use it. If there are several, ask the user which one.
    - If `.claude/plans/` is empty or doesn't exist:
      > No plan to revise. Run `/plan-feature [description]` first.
 
@@ -132,13 +132,13 @@ This is the only breadcrumb kept in the plan itself. Full history lives in git.
 
 ## Step 6: Get Approval
 
-If you're in plan mode, write the revision wherever plan mode tells you to: the list of changes, then every section of the plan you rewrote, as it will read after the change. Call `ExitPlanMode` to show it to the user for approval. If they reject it with feedback, adjust and call `ExitPlanMode` again. Don't touch the plan file until they approve.
+If you're in plan mode, write the revision wherever plan mode tells you to: the list of changes, then every section of the plan you rewrote, as it will read after the change. Call `ExitPlanMode` to show it to the user for approval. If they reject it with feedback, adjust and call `ExitPlanMode` again. Don't touch the plan file until they approve. Approval means the revision is ready to save, not to build: save it and stop.
 
 If you aren't in plan mode, go straight to Step 7.
 
 ## Step 7: Save and Summarize
 
-1. Overwrite `.claude/plans/[feature-name].md`.
+1. Overwrite `.claude/plans/[feature-name].md`. If plan mode's draft of the revision is in `.claude/plans/`, delete it, so it isn't mistaken for a plan later.
 
 2. Show the user:
 

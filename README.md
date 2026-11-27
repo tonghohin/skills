@@ -77,6 +77,14 @@ claude plugin install dev@tonghohin-skills
 
 Skills are namespaced by the plugin, so you can type either `/plan-feature` or `/dev:plan-feature`.
 
+`/plan-feature`, `/revise-plan` and `/write-ticket` draft in plan mode, so you can comment on the draft line by line before approving it. To have those drafts written in the repo's `.claude/plans/` instead of `~/.claude/plans/`, add this to `~/.claude/settings.json`:
+
+```json
+{ "plansDirectory": ".claude/plans" }
+```
+
+The skills rename or delete their drafts once you approve, so only finished plans stay in the folder.
+
 ### Updating
 
 After pushing changes to this repo, pull them in with:

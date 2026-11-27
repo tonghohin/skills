@@ -4,11 +4,15 @@ description: "Turn a rough idea, bug, or request into a ticket someone else can 
 argument-hint: "<what the ticket is about>"
 ---
 
-# Write Ticket — Research → Grill → Draft → Cold Read
+# Write Ticket — Plan Mode → Research → Grill → Draft → Cold Read → Approve → File
 
 You are writing a ticket, not implementing or fixing anything. Produce a ticket that someone who was not in this conversation can pick up and finish without asking the author anything.
 
 Write down the problem, the finish line, and the constraints, and leave the route to the person doing the work. A ticket that's only a title makes the assignee rebuild the context, and one full of step-by-step instructions written without the code open leads them into a wall.
+
+## Step 0: Enter Plan Mode
+
+Before anything else, call `EnterPlanMode`, so the session stays read-only and the draft can be reviewed in the plan approval view, where the user can comment on individual lines. Skip this if the session is already in plan mode, or if the tool isn't available, and carry on.
 
 ## Step 1: Intake
 
@@ -199,12 +203,16 @@ Check that:
 
 ## Step 6: Review and File
 
-Show the draft to the user, along with anything from the cold read that still needs their answer. Revise until they approve it.
+If you're in plan mode, write the full ticket wherever plan mode tells you to, with anything from the cold read that still needs the user's answer listed under Open Questions, then call `ExitPlanMode` to show it for approval. If the user rejects it with comments, revise the ticket to address each one and call `ExitPlanMode` again. Approval means the ticket is ready to file or hand over, not that you should start the work it describes.
+
+If you aren't in plan mode, show the draft to the user, along with anything from the cold read that still needs their answer. Revise until they approve it.
 
 The ticket's home is the team's tracker, so don't save it to a file in the repo. Once it's approved, get it there one of two ways:
 
 - **File it.** If the `gh` CLI or a tracker tool is available, offer to file it, and say where it will go before you do. Filing publishes the ticket and notifies people, so do it only when the user says to. Set only the labels, assignees, and priority the user gave you. The title goes in the tracker's title field, so leave the `# [Title]` line and any field the tracker holds separately, such as Type, out of the body.
 - **Hand it over.** Otherwise, give the final title on its own line and the body in a single fenced markdown block, so the user can copy each into the tracker without picking it out of the conversation.
+
+If plan mode's draft of the ticket is in `.claude/plans/` (the `plansDirectory` setting puts it there), delete it now, so it isn't mistaken for a plan later.
 
 Then tell the user:
 
